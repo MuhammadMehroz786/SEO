@@ -35,6 +35,7 @@ class StoreCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
         fields = ["id", "name", "shopify_url", "access_token"]
+        extra_kwargs = {"access_token": {"write_only": True}}
 
 
 class StoreDetailSerializer(serializers.ModelSerializer):

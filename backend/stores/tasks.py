@@ -12,7 +12,7 @@ def sync_store(store_id: int):
     for product in products:
         page, _ = Page.objects.update_or_create(
             store=store,
-            shopify_id=product["id"],
+            shopify_id=str(product["id"]),
             defaults={
                 "url": f"/products/{product['handle']}",
                 "page_type": "product",

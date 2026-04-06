@@ -1,4 +1,5 @@
 from django.db import models
+from encrypted_fields.fields import EncryptedCharField
 
 
 class ActiveManager(models.Manager):
@@ -15,7 +16,7 @@ class ActiveManager(models.Manager):
 class Store(models.Model):
     name = models.CharField(max_length=255)
     shopify_url = models.CharField(max_length=255, unique=True)
-    access_token = models.CharField(max_length=255)
+    access_token = EncryptedCharField(max_length=255)
     seo_score = models.IntegerField(default=0)
     last_crawl_date = models.DateTimeField(null=True, blank=True)
     is_deleted = models.BooleanField(default=False)

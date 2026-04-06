@@ -13,6 +13,7 @@ class DataForSEOClient:
             f"{self.BASE_URL}/{endpoint}",
             json=data,
             auth=self.auth,
+            timeout=60,
         )
         response.raise_for_status()
         return response.json()

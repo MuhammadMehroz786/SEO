@@ -107,8 +107,9 @@ CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-# Encrypted fields
-FIELD_ENCRYPTION_KEY = os.getenv("FIELD_ENCRYPTION_KEY", "")
+# Encrypted fields — generate a real key for production with:
+#   python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+FIELD_ENCRYPTION_KEY = os.getenv("FIELD_ENCRYPTION_KEY", "ZV-CvMa7K5sza3YczIPVmnoRkurUNDMHCxjYJsBMjHg=")
 
 # API Keys (loaded from env, used by service clients)
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")

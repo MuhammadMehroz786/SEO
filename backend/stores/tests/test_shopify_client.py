@@ -15,6 +15,7 @@ class ShopifyClientTest(TestCase):
                 {"id": "123", "title": "Test Product", "handle": "test-product", "images": []},
             ]
         }
+        mock_response.headers = {}
         mock_response.raise_for_status = MagicMock()
         mock_get.return_value = mock_response
 
@@ -30,6 +31,7 @@ class ShopifyClientTest(TestCase):
                 {"id": "456", "title": "Test Collection"},
             ]
         }
+        mock_response.headers = {}
         mock_response.raise_for_status = MagicMock()
         mock_get.return_value = mock_response
 
