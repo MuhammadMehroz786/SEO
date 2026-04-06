@@ -6,11 +6,15 @@ import SEOScoreBadge from "../components/SEOScoreBadge";
 export default function StoreDetail() {
   const { id } = useParams();
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchStoreDashboard(id).then((res) => setData(res.data));
+    fetchStoreDashboard(id)
+      .then((res) => setData(res.data))
+      .catch(() => setError("Failed to load store details."));
   }, [id]);
 
+  if (error) return <div className="text-red-400">{error}</div>;
   if (!data) return <div className="text-gray-400">Loading...</div>;
 
   return (

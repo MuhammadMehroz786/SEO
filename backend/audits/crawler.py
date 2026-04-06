@@ -1,5 +1,9 @@
+import logging
 from audits.models import AuditIssue
 from stores.models import Page
+from .pagespeed_client import PageSpeedClient
+
+logger = logging.getLogger(__name__)
 
 
 class SiteAuditor:
@@ -115,6 +119,33 @@ class SiteAuditor:
         AuditIssue.objects.bulk_create(issues)
         return issues
 
+    def check_page_speed(self, page: Page) -> list:
+        """Check page speed using PageSpeed Insights API."""
+        issues = []
+        store_url = self.store.shopify_url
+        if not store_url.startswith("http"):
+            full_url = f"https://{store_url}{page.url}"
+        else:
+            full_url = f"{store_url}{page.url}"
+
+        try:
+            client = PageSpeedClient()
+            result = client.analyze(full_url)
+            score = result.get("performance_score")
+            if score is not None and score < 50:
+                issues.append(AuditIssue(
+                    audit_run=self.audit_run, page=page,
+                    issue_type="slow_page", severity="warning",
+                    description=f"Page performance score is {score}/100 (LCP: {result.get('lcp', 'N/A')}ms)",
+                    fix_suggestion="Optimize images, reduce JavaScript, enable caching",
+                ))
+        except Exception:
+            logger.warning("PageSpeed check failed for %s", full_url)
+
+        if issues:
+            AuditIssue.objects.bulk_create(issues)
+        return issues
+
     def run_full_audit(self) -> int:
         total_issues = 0
         pages = Page.objects.filter(store=self.store).prefetch_related("images")
@@ -125,5 +156,10 @@ class SiteAuditor:
 
         dup_issues = self.check_duplicates()
         total_issues += len(dup_issues)
+
+        # Check page speed for up to 10 pages (API is rate-limited)
+        for page in pages[:10]:
+            speed_issues = self.check_page_speed(page)
+            total_issues += len(speed_issues)
 
         return total_issues

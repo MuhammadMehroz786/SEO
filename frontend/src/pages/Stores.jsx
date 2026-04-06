@@ -6,29 +6,39 @@ export default function Stores() {
   const [stores, setStores] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", shopify_url: "", access_token: "" });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const load = () => {
-    fetchStores().then((res) => setStores(res.data.results));
+    setLoading(true);
+    fetchStores()
+      .then((res) => { setStores(res.data.results); setError(null); })
+      .catch(() => setError("Failed to load stores. Is the backend running?"))
+      .finally(() => setLoading(false));
   };
 
   useEffect(load, []);
 
   const handleCreate = (e) => {
     e.preventDefault();
-    createStore(form).then(() => {
-      setShowForm(false);
-      setForm({ name: "", shopify_url: "", access_token: "" });
-      load();
-    });
+    createStore(form)
+      .then(() => {
+        setShowForm(false);
+        setForm({ name: "", shopify_url: "", access_token: "" });
+        load();
+      })
+      .catch(() => setError("Failed to create store. Check your inputs."));
   };
 
   const handleSync = (id) => {
-    syncStore(id).then(() => alert("Sync started!"));
+    syncStore(id)
+      .then(() => alert("Sync started!"))
+      .catch(() => setError("Failed to start sync."));
   };
 
   const handleDelete = (id) => {
     if (confirm("Delete this store?")) {
-      deleteStore(id).then(load);
+      deleteStore(id).then(load).catch(() => setError("Failed to delete store."));
     }
   };
 
@@ -75,6 +85,14 @@ export default function Stores() {
           </button>
         </form>
       )}
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-4 text-sm">
+          {error}
+        </div>
+      )}
+
+      {loading && <p className="text-gray-400">Loading stores...</p>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {stores.map((store) => (

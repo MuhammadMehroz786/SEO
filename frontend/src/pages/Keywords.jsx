@@ -32,9 +32,11 @@ export default function Keywords() {
   }, [selectedStore]);
 
   const handleResearch = () => {
+    if (!searchTerm.trim()) return;
     setSearching(true);
     researchKeywords(searchTerm)
       .then((res) => setResearchResults(res.data))
+      .catch(() => alert("Keyword research failed. Check your DataForSEO API credentials."))
       .finally(() => setSearching(false));
   };
 

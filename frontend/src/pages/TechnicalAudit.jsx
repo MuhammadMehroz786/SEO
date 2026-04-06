@@ -25,7 +25,9 @@ export default function TechnicalAudit() {
   }, [selectedStore]);
 
   const handleTrigger = () => {
-    triggerAudit(selectedStore).then(() => alert("Audit started! Refresh in a moment."));
+    triggerAudit(selectedStore)
+      .then(() => alert("Audit started! Refresh in a moment."))
+      .catch(() => alert("Failed to start audit. Is Celery running?"));
   };
 
   return (

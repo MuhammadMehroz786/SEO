@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from stores.models import Store, Page
@@ -7,7 +8,7 @@ from audits.models import AuditRun
 
 @api_view(["GET"])
 def dashboard_overview(request):
-    stores = Store.objects.all()
+    stores = Store.objects.prefetch_related("audit_runs", "pages", "keywords").all()
     store_data = []
     for store in stores:
         latest_audit = store.audit_runs.first()
@@ -32,7 +33,7 @@ def dashboard_overview(request):
 
 @api_view(["GET"])
 def store_dashboard(request, store_id):
-    store = Store.objects.get(id=store_id)
+    store = get_object_or_404(Store, id=store_id)
 
     # Top keywords by position
     tracked_keywords = Keyword.objects.filter(store=store, is_tracked=True)[:10]

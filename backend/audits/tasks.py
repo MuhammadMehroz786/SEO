@@ -1,11 +1,14 @@
+import logging
 from celery import shared_task
 from django.utils import timezone
 from stores.models import Store
 from .models import AuditRun
 from .crawler import SiteAuditor
 
+logger = logging.getLogger(__name__)
 
-@shared_task
+
+@shared_task(autoretry_for=(Exception,), retry_backoff=120, retry_kwargs={"max_retries": 2})
 def run_site_audit(store_id: int):
     store = Store.objects.get(id=store_id)
     audit_run = AuditRun.objects.create(store=store, status="running")
@@ -21,12 +24,14 @@ def run_site_audit(store_id: int):
         audit_run.issues_found = total_issues
         audit_run.save()
 
-        # Update store last crawl date
         store.last_crawl_date = timezone.now()
         store.save(update_fields=["last_crawl_date"])
-    except Exception as e:
+        logger.info("Audit completed for %s: %d pages, %d issues",
+                     store.name, pages_count, total_issues)
+    except Exception:
         audit_run.status = "failed"
         audit_run.save(update_fields=["status"])
+        logger.exception("Audit failed for store %s", store.name)
         raise
 
 
