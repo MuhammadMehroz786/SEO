@@ -89,12 +89,17 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://76.13.253.211",
+    "https://srv1336441.hstgr.cloud",
+    "http://srv1336441.hstgr.cloud",
 ]
+CORS_ALLOW_ALL_ORIGINS = DEBUG
 
 # REST Framework
 REST_FRAMEWORK = {
