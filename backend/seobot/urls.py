@@ -8,4 +8,5 @@ urlpatterns = [
     path("api/v1/audits/", include("audits.urls")),
     path("api/v1/ai/", include("ai_engine.urls")),
     path("api/v1/dashboard/", include("dashboard.urls")),
+    path("api/v1/backlinks/", include("backlinks.urls")),
 ]

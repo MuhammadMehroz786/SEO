@@ -44,4 +44,34 @@ export const fetchDashboard = () => api.get("/dashboard/");
 export const fetchStoreDashboard = (storeId) =>
   api.get(`/dashboard/${storeId}/`);
 
+// Backlinks
+export const fetchBacklinks = (storeId) =>
+  api.get(`/backlinks/?store_id=${storeId}`);
+export const fetchBacklinkSummary = (storeId) =>
+  api.get(`/backlinks/summary/?store_id=${storeId}`);
+export const fetchBacklinkSnapshot = (storeId) =>
+  api.get(`/backlinks/snapshot/?store_id=${storeId}`);
+export const refreshBacklinks = (storeId) =>
+  api.post("/backlinks/refresh/", { store_id: storeId });
+export const fetchProspects = (storeId) =>
+  api.get(`/backlinks/prospects/?store_id=${storeId}`);
+export const createProspect = (data) =>
+  api.post("/backlinks/prospects/", data);
+export const suggestProspects = (storeId) =>
+  api.post("/backlinks/prospects/suggest/", { store_id: storeId });
+export const sendProspectEmail = (prospectId) =>
+  api.post(`/backlinks/prospects/${prospectId}/email/`);
+export const updateProspectStatus = (prospectId, prospectStatus) =>
+  api.patch(`/backlinks/prospects/${prospectId}/status/`, { status: prospectStatus });
+export const fetchCampaigns = (storeId) =>
+  api.get(`/backlinks/campaigns/?store_id=${storeId}`);
+export const fetchEmailConfig = (storeId) =>
+  api.get(`/backlinks/email-config/?store_id=${storeId}`);
+export const saveEmailConfig = (data) =>
+  api.post("/backlinks/email-config/", data);
+export const updateEmailConfig = (id, data) =>
+  api.put(`/backlinks/email-config/${id}/`, data);
+export const getGmailAuthUrl = (storeId) =>
+  api.get(`/backlinks/email-config/gmail/auth-url/?store_id=${storeId}`);
+
 export default api;
